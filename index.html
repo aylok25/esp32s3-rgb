@@ -3,186 +3,193 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>ESP32 Neon RGB Controller</title>
+  <title>ESP32 OLED Cyber Controller</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-color: #0b0e14;
-      --card-bg: rgba(255, 255, 255, 0.05);
-      --card-border: rgba(255, 255, 255, 0.12);
-      --accent-color: #0088cc;
-      --text-color: #ffffff;
+      --bg: #05070a;
+      --card-bg: #0d1117;
+      --card-border: #1f293d;
       --c1: #ff0055;
       --c2: #00e5ff;
+      --accent: #00f0ff;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, Helvetica, sans-serif;
-      background: radial-gradient(circle at top, #1a1f2c 0%, var(--bg-color) 100%);
-      color: var(--text-color);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: #f0f6fc;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 16px;
+      padding: 12px;
       margin: 0;
       min-height: 100vh;
       box-sizing: border-box;
       user-select: none;
     }
 
-    h2 {
-      margin: 4px 0 16px 0;
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+    /* HEADER & CYBER ORB */
+    .header-title {
+      font-size: 16px;
+      font-weight: 800;
       text-transform: uppercase;
-      background: linear-gradient(90deg, #00e5ff, #ff0055);
+      letter-spacing: 1.5px;
+      background: linear-gradient(90deg, #00f0ff, #ff007f);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      margin: 4px 0 12px 0;
     }
 
-    /* 3D СВІТЛОДІОДНА ЛАМПА */
-    .lamp-wrapper {
+    .orb-wrapper {
       position: relative;
-      margin: 10px 0 20px 0;
+      width: 100px;
+      height: 100px;
       display: flex;
       justify-content: center;
       align-items: center;
+      margin-bottom: 16px;
     }
 
-    .lamp-glow {
+    .orb-ring {
       position: absolute;
-      width: 110px;
-      height: 110px;
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--c1), var(--c2));
-      filter: blur(25px);
-      opacity: 0.75;
-      transition: all 0.3s ease;
+      background: conic-gradient(from 0deg, var(--c1), var(--c2), var(--c1));
+      filter: blur(12px);
+      opacity: 0.7;
+      animation: rotate 6s linear infinite;
     }
 
-    .lamp-bulb {
+    .orb-core {
       position: relative;
-      width: 90px;
-      height: 90px;
+      width: 76px;
+      height: 76px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--c1), var(--c2));
-      border: 3px solid rgba(255, 255, 255, 0.4);
-      box-shadow: inset 0 8px 15px rgba(255, 255, 255, 0.5), inset 0 -8px 15px rgba(0, 0, 0, 0.6);
+      background: radial-gradient(circle at 30% 30%, var(--c1), var(--c2));
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px var(--c1);
       transition: all 0.3s ease;
     }
 
-    /* КАРТКИ В СТИЛІ GLASSMORPHISM */
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* CARD CONTAINERS */
     .card {
       background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 16px;
+      border-radius: 16px;
+      padding: 14px;
       width: 100%;
       max-width: 350px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       box-sizing: border-box;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     }
 
-    .card-title {
+    .card-head {
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1px;
-      opacity: 0.6;
-      margin-bottom: 12px;
+      color: #8b949e;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
     }
 
-    /* ВИБІР КОЛЬОРУ */
-    .color-pickers {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
+    /* COLOR PICKERS */
+    .color-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
-    .color-box {
+    .color-picker-btn {
+      background: #161b22;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 8px 10px;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .color-picker-btn span {
       font-size: 12px;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .color-circle-wrapper {
-      position: relative;
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      padding: 3px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.05));
+      color: #c9d1d9;
     }
 
     input[type=color] {
       -webkit-appearance: none;
       border: none;
-      width: 100%;
-      height: 100%;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       cursor: pointer;
       background: none;
     }
     input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
     input[type=color]::-webkit-color-swatch {
-      border: none;
+      border: 2px solid rgba(255,255,255,0.2);
       border-radius: 50%;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
 
-    /* СІТКА КНОПОК ЕФЕКТІВ */
+    /* GRID BUTTONS */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
 
     .btn {
-      padding: 11px 8px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.04);
-      color: rgba(255, 255, 255, 0.85);
-      border-radius: 12px;
+      background: #161b22;
+      border: 1px solid var(--card-border);
+      color: #c9d1d9;
+      padding: 10px 6px;
+      border-radius: 10px;
+      font-size: 11px;
       font-weight: 600;
-      font-size: 12px;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.15s ease;
       text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
     }
 
     .btn:active { transform: scale(0.96); }
 
     .btn.active {
-      background: linear-gradient(135deg, #0088cc, #0055ff);
-      color: #ffffff;
-      border-color: rgba(255,255,255,0.4);
-      box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
-      font-weight: 700;
+      background: linear-gradient(135deg, #00f0ff, #0077ff);
+      color: #000000;
+      border-color: #00f0ff;
+      font-weight: 800;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
     }
 
-    /* ПОЛЗУНКИ */
-    .slider-group { margin-bottom: 12px; }
-    .slider-group:last-child { margin-bottom: 0; }
-    
-    label {
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+      padding: 8px 4px;
+    }
+
+    /* SLIDERS */
+    .slider-box { margin-bottom: 10px; }
+    .slider-box:last-child { margin-bottom: 0; }
+
+    .slider-label {
       display: flex;
       justify-content: space-between;
       font-size: 12px;
       font-weight: 600;
+      color: #8b949e;
       margin-bottom: 6px;
-      color: rgba(255, 255, 255, 0.8);
     }
+
+    .slider-label .val { color: var(--accent); font-weight: 700; }
 
     input[type=range] {
       width: 100%;
@@ -190,95 +197,83 @@
       border-radius: 3px;
       outline: none;
       -webkit-appearance: none;
-      background: rgba(255, 255, 255, 0.1);
+      background: #21262d;
     }
 
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
-      background: #ffffff;
+      background: #00f0ff;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      border: 2px solid var(--accent-color);
-      transition: transform 0.1s ease;
+      box-shadow: 0 0 10px #00f0ff;
     }
 
-    input[type=range]::-webkit-slider-thumb:active {
-      transform: scale(1.2);
-    }
-
-    /* ГОЛОВНІ КНОПКИ */
-    .btn-apply {
+    /* ACTION BUTTONS */
+    .btn-main {
       width: 100%;
       max-width: 350px;
-      padding: 16px;
-      font-size: 15px;
-      font-weight: 700;
+      padding: 15px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
       border: none;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border-radius: 14px;
+      background: linear-gradient(90deg, #00f0ff, #7000ff);
       color: #ffffff;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(0, 114, 255, 0.4);
-      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(112, 0, 255, 0.4);
       margin-top: 4px;
-      margin-bottom: 10px;
-      letter-spacing: 0.5px;
+      margin-bottom: 8px;
     }
 
-    .btn-apply:active { transform: scale(0.98); opacity: 0.9; }
+    .btn-main:active { transform: scale(0.98); opacity: 0.9; }
 
     .btn-off {
       width: 100%;
       max-width: 350px;
-      padding: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      border: 1px solid rgba(255, 59, 48, 0.3);
+      padding: 11px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 69, 58, 0.3);
       border-radius: 12px;
-      background: rgba(255, 59, 48, 0.1);
-      color: #ff4d4d;
+      background: rgba(255, 69, 58, 0.08);
+      color: #ff453a;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
 
-    .btn-off:active { transform: scale(0.97); background: rgba(255, 59, 48, 0.25); }
+    .btn-off:active { transform: scale(0.97); background: rgba(255, 69, 58, 0.2); }
   </style>
 </head>
 <body>
 
-  <h2>ESP32 Smart Control</h2>
+  <div class="header-title">ESP32 CYBER CONTROL</div>
 
-  <!-- 3D ЛАМПА -->
-  <div class="lamp-wrapper">
-    <div class="lamp-glow" id="glow"></div>
-    <div class="lamp-bulb" id="bulb"></div>
+  <!-- CYBER ORB VISUALIZER -->
+  <div class="orb-wrapper">
+    <div class="orb-ring"></div>
+    <div class="orb-core" id="orbCore"></div>
   </div>
 
-  <!-- ВИБІР КОЛЬОРІВ ДЛЯ ЗМІШУВАННЯ -->
+  <!-- COLOR SELECTION -->
   <div class="card">
-    <div class="card-title">🎨 Змішування кольорів</div>
-    <div class="color-pickers">
-      <div class="color-box">
+    <div class="card-head"><span>🎨 Палітра змішування</span></div>
+    <div class="color-row">
+      <div class="color-picker-btn">
         <span>Основний</span>
-        <div class="color-circle-wrapper">
-          <input type="color" id="color1" value="#ff0055" oninput="updateUI()">
-        </div>
+        <input type="color" id="color1" value="#ff0055" oninput="updateUI()">
       </div>
-      <div class="color-box">
+      <div class="color-picker-btn">
         <span>Додатковий</span>
-        <div class="color-circle-wrapper">
-          <input type="color" id="color2" value="#00e5ff" oninput="updateUI()">
-        </div>
+        <input type="color" id="color2" value="#00e5ff" oninput="updateUI()">
       </div>
     </div>
   </div>
 
-  <!-- ВИБІР ЕФЕКТУ -->
+  <!-- MODES -->
   <div class="card">
-    <div class="card-title">✨ Вибір ефекту</div>
+    <div class="card-head"><span>⚡ Вибір ефекту</span></div>
     <div class="grid-2">
       <button class="btn active" onclick="selectMode(1, this)">🛑 Статика</button>
       <button class="btn" onclick="selectMode(2, this)">⚡ Миготіння</button>
@@ -290,33 +285,38 @@
     </div>
   </div>
 
-  <!-- АТМОСФЕРНІ ПРЕСЕТИ -->
+  <!-- 10 PRESETS -->
   <div class="card">
-    <div class="card-title">🌅 Готові теми</div>
+    <div class="card-head"><span>🌅 Готові атмосферні теми</span></div>
     <div class="grid-2">
-      <button class="btn" onclick="applyPreset('#ff5500', '#800080', 4)">🌅 Захід сонця</button>
-      <button class="btn" onclick="applyPreset('#00ffcc', '#0022ff', 4)">🌊 Океан</button>
-      <button class="btn" onclick="applyPreset('#ff0099', '#00dcff', 4)">🌆 Кіберпанк</button>
-      <button class="btn" onclick="applyPreset('#32ff32', '#006414', 4)">🌲 Неоновий ліс</button>
+      <button class="btn preset-btn" onclick="applyPreset('#ff5500', '#800080', 4)">🌅 Захід сонця</button>
+      <button class="btn preset-btn" onclick="applyPreset('#00ffcc', '#0022ff', 4)">🌊 Океан</button>
+      <button class="btn preset-btn" onclick="applyPreset('#ff0099', '#00dcff', 4)">🌆 Кіберпанк</button>
+      <button class="btn preset-btn" onclick="applyPreset('#32ff32', '#006414', 4)">🌲 Магічний ліс</button>
+      <button class="btn preset-btn" onclick="applyPreset('#00ffaa', '#9900ff', 4)">🌌 Сяйво</button>
+      <button class="btn preset-btn" onclick="applyPreset('#ff1100', '#ff8800', 4)">🌋 Рідка лава</button>
+      <button class="btn preset-btn" onclick="applyPreset('#a0e7e5', '#ffffff', 4)">❄️ Арктика</button>
+      <button class="btn preset-btn" onclick="applyPreset('#e0b0ff', '#8a2be2', 4)">💜 Лаванда</button>
+      <button class="btn preset-btn" onclick="applyPreset('#ff6b6b', '#ffe66d', 4)">🍑 Персик</button>
+      <button class="btn preset-btn" onclick="applyPreset('#0000ff', '#ff00ff', 4)">🪩 Диско-паті</button>
     </div>
   </div>
 
-  <!-- НАЛАШТУВАННЯ ЯСКРАВОСТІ ТА ШВИДКОСТІ У % -->
+  <!-- SLIDERS -->
   <div class="card">
-    <div class="card-title">⚙️ Налаштування параметрів</div>
-    <div class="slider-group">
-      <label>Яскравість <span id="bright-val">50%</span></label>
+    <div class="card-head"><span>⚙️ Параметри</span></div>
+    <div class="slider-box">
+      <div class="slider-label"><span>Яскравість</span><span class="val" id="bright-val">50%</span></div>
       <input type="range" id="brightness" min="5" max="100" value="50" oninput="updateUI()">
     </div>
-    <div class="slider-group" style="margin-top: 10px;">
-      <label>Швидкість ефекту <span id="speed-val">50%</span></label>
-      <!-- Швидкість від 1% до 100% -->
+    <div class="slider-box" style="margin-top: 12px;">
+      <div class="slider-label"><span>Швидкість ефекту</span><span class="val" id="speed-val">50%</span></div>
       <input type="range" id="speed" min="1" max="100" value="50" oninput="updateUI()">
     </div>
   </div>
 
-  <button class="btn-apply" onclick="sendData()">Застосувати налаштування ✨</button>
-  <button class="btn-off" onclick="turnOff()">Вимкнути світлодіод ⬛</button>
+  <button class="btn-main" onclick="sendData()">ЗАСТОСУВАТИ НАЛАШТУВАННЯ ✨</button>
+  <button class="btn-off" onclick="turnOff()">ВИМКНУТИ СВІТЛОДІОД ⬛</button>
 
   <script>
     const tg = window.Telegram.WebApp;
@@ -328,8 +328,7 @@
     const c2 = document.getElementById('color2');
     const bright = document.getElementById('brightness');
     const speed = document.getElementById('speed');
-    const bulb = document.getElementById('bulb');
-    const glow = document.getElementById('glow');
+    const orbCore = document.getElementById('orbCore');
 
     function hexToRgb(hex) {
       const bigint = parseInt(hex.replace('#', ''), 16);
@@ -344,8 +343,7 @@
       document.documentElement.style.setProperty('--c2', c2.value);
 
       const opacity = bright.value / 100;
-      glow.style.opacity = opacity * 0.8;
-      bulb.style.opacity = Math.max(0.3, opacity);
+      orbCore.style.opacity = Math.max(0.2, opacity);
     }
 
     function selectMode(mode, btn) {
@@ -372,7 +370,6 @@
       }
       const rgb1 = hexToRgb(c1.value);
       const rgb2 = hexToRgb(c2.value);
-      // Передаємо швидкість як чистий відсоток (1..100)
       const command = `CMD:${currentMode},${rgb1.r},${rgb1.g},${rgb1.b},${rgb2.r},${rgb2.g},${rgb2.b},${bright.value},${speed.value}`;
       tg.sendData(command);
     }
