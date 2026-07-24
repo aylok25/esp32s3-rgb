@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ESP32 RGB Controller</title>
+  <title>ESP32 RGB Pro Controller</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
@@ -13,106 +13,108 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
+      padding: 16px;
       margin: 0;
       box-sizing: border-box;
     }
-    h2 { margin-top: 0; margin-bottom: 15px; font-size: 22px; }
-    
-    .preview-box {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      margin-bottom: 20px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-      background-color: rgb(255, 0, 0);
-      transition: background-color 0.1s ease;
-      border: 3px solid rgba(255,255,255,0.2);
-    }
+    h2 { margin-top: 0; margin-bottom: 15px; font-size: 20px; text-align: center; }
 
     .card {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       border-radius: 16px;
-      padding: 16px;
+      padding: 14px;
       width: 100%;
-      max-width: 340px;
-      margin-bottom: 15px;
+      max-width: 350px;
+      margin-bottom: 12px;
       box-sizing: border-box;
     }
 
     .card-title {
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.8px;
       opacity: 0.7;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
-    .slider-group { margin-bottom: 12px; }
-    .slider-group:last-child { margin-bottom: 0; }
-    
-    label {
+    /* Вибір кольору */
+    .color-pickers {
       display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      margin-bottom: 6px;
-      font-weight: 500;
+      justify-content: space-around;
+      align-items: center;
     }
-
-    input[type=range] {
-      width: 100%;
-      height: 8px;
-      border-radius: 4px;
-      outline: none;
-      -webkit-appearance: none;
-      background: #333;
+    .color-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
     }
-
-    input[type=range]::-webkit-slider-thumb {
+    input[type=color] {
       -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
+      border: none;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      background: #fff;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      background: none;
+    }
+    input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type=color]::-webkit-color-swatch {
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
-    #red { accent-color: #ff4d4d; }
-    #green { accent-color: #4dff4d; }
-    #blue { accent-color: #4d4dff; }
-    #brightness { accent-color: #ffaa00; }
-    #speed { accent-color: #00ccff; }
+    /* Сітки кнопок */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-    .mode-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .mode-btn {
-      padding: 12px 8px;
+    .btn {
+      padding: 10px 6px;
       border: 1px solid rgba(255,255,255,0.15);
       background: rgba(255,255,255,0.05);
       color: inherit;
       border-radius: 10px;
       font-weight: 600;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.2s ease;
+      text-align: center;
     }
-
-    .mode-btn.active {
+    .btn.active {
       background: var(--tg-theme-button-color, #2481cc);
       color: var(--tg-theme-button-text-color, #ffffff);
       border-color: transparent;
     }
 
+    /* Ползунки */
+    .slider-group { margin-bottom: 10px; }
+    .slider-group:last-child { margin-bottom: 0; }
+    label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+    input[type=range] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+      background: #333;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+    }
+
     .btn-apply {
       width: 100%;
-      max-width: 340px;
-      padding: 16px;
+      max-width: 350px;
+      padding: 15px;
       font-size: 16px;
       font-weight: bold;
       border: none;
@@ -121,17 +123,16 @@
       color: var(--tg-theme-button-text-color, #ffffff);
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
-
     .btn-off {
       width: 100%;
-      max-width: 340px;
-      padding: 12px;
-      font-size: 14px;
+      max-width: 350px;
+      padding: 10px;
+      font-size: 13px;
       font-weight: 600;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       background-color: rgba(255, 59, 48, 0.2);
       color: #ff4d4d;
       cursor: pointer;
@@ -140,34 +141,45 @@
 </head>
 <body>
 
-  <h2>🎛️ Пульт ESP32-S3</h2>
-  <div id="preview" class="preview-box"></div>
+  <h2>🎛️ Пульт ESP32 Pro</h2>
 
-  <!-- РЕЖИМИ -->
+  <!-- ВИБІР ДВОХ КОЛЬОРІВ -->
   <div class="card">
-    <div class="card-title">✨ Режим роботи</div>
-    <div class="mode-grid">
-      <button class="mode-btn active" onclick="selectMode(1, this)">🛑 Статика</button>
-      <button class="mode-btn" onclick="selectMode(2, this)">⚡ Миготіння</button>
-      <button class="mode-btn" onclick="selectMode(3, this)">🌊 Дихання</button>
-      <button class="mode-btn" onclick="selectMode(4, this)">🌈 Веселка</button>
+    <div class="card-title">🎨 Палітра кольорів</div>
+    <div class="color-pickers">
+      <div class="color-box">
+        <span>Основний</span>
+        <input type="color" id="color1" value="#ff0000">
+      </div>
+      <div class="color-box">
+        <span>Додатковий</span>
+        <input type="color" id="color2" value="#0000ff">
+      </div>
     </div>
   </div>
 
-  <!-- КОЛІР -->
+  <!-- РЕЖИМИ -->
   <div class="card">
-    <div class="card-title">🎨 Палітра кольору (RGB)</div>
-    <div class="slider-group">
-      <label>Червоний: <span id="r-val">255</span></label>
-      <input type="range" id="red" min="0" max="255" value="255">
+    <div class="card-title">✨ Режими ефектів</div>
+    <div class="grid-2">
+      <button class="btn active" onclick="selectMode(1, this)">🛑 Статика</button>
+      <button class="btn" onclick="selectMode(2, this)">⚡ Миготіння</button>
+      <button class="btn" onclick="selectMode(3, this)">🌊 Дихання</button>
+      <button class="btn" onclick="selectMode(4, this)">🔀 Змішування</button>
+      <button class="btn" onclick="selectMode(5, this)">🌈 Веселка</button>
+      <button class="btn" onclick="selectMode(6, this)">🚨 Поліція</button>
+      <button class="btn" onclick="selectMode(7, this)" style="grid-column: span 2;">🔥 Живий Вогонь / Свічка</button>
     </div>
-    <div class="slider-group">
-      <label>Зелений: <span id="g-val">0</span></label>
-      <input type="range" id="green" min="0" max="255" value="0">
-    </div>
-    <div class="slider-group">
-      <label>Синій: <span id="b-val">0</span></label>
-      <input type="range" id="blue" min="0" max="255" value="0">
+  </div>
+
+  <!-- АТМОСФЕРНІ ПРЕСЕТИ -->
+  <div class="card">
+    <div class="card-title">🌅 Готові пресети</div>
+    <div class="grid-2">
+      <button class="btn" onclick="applyPreset('#ff5500', '#800080', 4)">🌅 Захід сонця</button>
+      <button class="btn" onclick="applyPreset('#00ffcc', '#0022ff', 4)">🌊 Океан</button>
+      <button class="btn" onclick="applyPreset('#ff0099', '#00dcff', 4)">🌆 Кіберпанк</button>
+      <button class="btn" onclick="applyPreset('#32ff32', '#006414', 4)">🌲 Магічний ліс</button>
     </div>
   </div>
 
@@ -176,62 +188,63 @@
     <div class="card-title">⚙️ Налаштування</div>
     <div class="slider-group">
       <label>Яскравість: <span id="bright-val">50%</span></label>
-      <input type="range" id="brightness" min="5" max="100" value="50">
+      <input type="range" id="brightness" min="5" max="100" value="50" oninput="updateUI()">
     </div>
-    <div class="slider-group" style="margin-top: 10px;">
-      <label>Швидкість ефектів: <span id="speed-val">Середня 🚶</span></label>
-      <input type="range" id="speed" min="1" max="3" value="2">
+    <div class="slider-group" style="margin-top: 8px;">
+      <label>Швидкість: <span id="speed-val">Середня 🚶</span></label>
+      <input type="range" id="speed" min="1" max="3" value="2" oninput="updateUI()">
     </div>
   </div>
 
   <button class="btn-apply" onclick="sendData()">Застосувати ✨</button>
-  <button class="btn-off" onclick="turnOff()">Вимкнути світлодіод ⬛</button>
+  <button class="btn-off" onclick="turnOff()">Вимкнути ⬛</button>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    let currentMode = 1; // 1=Solid, 2=Blink, 3=Fade, 4=Rainbow
+    let currentMode = 1; 
 
-    const r = document.getElementById('red');
-    const g = document.getElementById('green');
-    const b = document.getElementById('blue');
+    const c1 = document.getElementById('color1');
+    const c2 = document.getElementById('color2');
     const bright = document.getElementById('brightness');
     const speed = document.getElementById('speed');
-    const preview = document.getElementById('preview');
 
     const speedLabels = {1: 'Повільно 🐢', 2: 'Середня 🚶', 3: 'Швидко 🚀'};
 
+    function hexToRgb(hex) {
+      const bigint = parseInt(hex.replace('#', ''), 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+
     function updateUI() {
-      document.getElementById('r-val').innerText = r.value;
-      document.getElementById('g-val').innerText = g.value;
-      document.getElementById('b-val').innerText = b.value;
       document.getElementById('bright-val').innerText = bright.value + '%';
       document.getElementById('speed-val').innerText = speedLabels[speed.value];
-      
-      preview.style.backgroundColor = `rgb(${r.value}, ${g.value}, ${b.value})`;
     }
 
     function selectMode(mode, btn) {
       currentMode = mode;
-      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.grid-2 .btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
     }
 
-    r.addEventListener('input', updateUI);
-    g.addEventListener('input', updateUI);
-    b.addEventListener('input', updateUI);
-    bright.addEventListener('input', updateUI);
-    speed.addEventListener('input', updateUI);
+    function applyPreset(hex1, hex2, mode) {
+      c1.value = hex1;
+      c2.value = hex2;
+      currentMode = mode;
+      sendData();
+    }
 
     function sendData() {
-      // Формат: CMD:mode,r,g,b,brightness,speed
-      const command = `CMD:${currentMode},${r.value},${g.value},${b.value},${bright.value},${speed.value}`;
+      const rgb1 = hexToRgb(c1.value);
+      const rgb2 = hexToRgb(c2.value);
+      // Формат: CMD:mode,r1,g1,b1,r2,g2,b2,bright,speed
+      const command = `CMD:${currentMode},${rgb1.r},${rgb1.g},${rgb1.b},${rgb2.r},${rgb2.g},${rgb2.b},${bright.value},${speed.value}`;
       tg.sendData(command);
     }
 
     function turnOff() {
-      tg.sendData("CMD:0,0,0,0,0,1");
+      tg.sendData("CMD:0,0,0,0,0,0,0,0,1");
     }
 
     updateUI();
