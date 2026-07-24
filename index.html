@@ -141,7 +141,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
 
-    /* СІТКА КНОПОК */
+    /* СІТКА КНОПОК ЕФЕКТІВ */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
     .btn {
@@ -251,15 +251,15 @@
 
   <h2>ESP32 Smart Control</h2>
 
-  <!-- ЖИВА 3D ЛАМПА -->
+  <!-- 3D ЛАМПА -->
   <div class="lamp-wrapper">
     <div class="lamp-glow" id="glow"></div>
     <div class="lamp-bulb" id="bulb"></div>
   </div>
 
-  <!-- ПАЛІТРА КОЛЬОРІВ -->
+  <!-- ВИБІР КОЛЬОРІВ ДЛЯ ЗМІШУВАННЯ -->
   <div class="card">
-    <div class="card-title">🎨 Палітра кольорів</div>
+    <div class="card-title">🎨 Змішування кольорів</div>
     <div class="color-pickers">
       <div class="color-box">
         <span>Основний</span>
@@ -276,9 +276,9 @@
     </div>
   </div>
 
-  <!-- РЕЖИМИ ЕФЕКТІВ -->
+  <!-- ВИБІР ЕФЕКТУ -->
   <div class="card">
-    <div class="card-title">✨ Режими ефектів</div>
+    <div class="card-title">✨ Вибір ефекту</div>
     <div class="grid-2">
       <button class="btn active" onclick="selectMode(1, this)">🛑 Статика</button>
       <button class="btn" onclick="selectMode(2, this)">⚡ Миготіння</button>
@@ -290,9 +290,9 @@
     </div>
   </div>
 
-  <!-- ГОТОВІ ПРЕСЕТИ -->
+  <!-- АТМОСФЕРНІ ПРЕСЕТИ -->
   <div class="card">
-    <div class="card-title">🌅 Атмосферні теми</div>
+    <div class="card-title">🌅 Готові теми</div>
     <div class="grid-2">
       <button class="btn" onclick="applyPreset('#ff5500', '#800080', 4)">🌅 Захід сонця</button>
       <button class="btn" onclick="applyPreset('#00ffcc', '#0022ff', 4)">🌊 Океан</button>
@@ -301,16 +301,17 @@
     </div>
   </div>
 
-  <!-- НАЛАШТУВАННЯ -->
+  <!-- НАЛАШТУВАННЯ ЯСКРАВОСТІ ТА ШВИДКОСТІ У % -->
   <div class="card">
-    <div class="card-title">⚙️ Налаштування світла</div>
+    <div class="card-title">⚙️ Налаштування параметрів</div>
     <div class="slider-group">
       <label>Яскравість <span id="bright-val">50%</span></label>
       <input type="range" id="brightness" min="5" max="100" value="50" oninput="updateUI()">
     </div>
     <div class="slider-group" style="margin-top: 10px;">
-      <label>Швидкість ефектів <span id="speed-val">Середня 🚶</span></label>
-      <input type="range" id="speed" min="1" max="3" value="2" oninput="updateUI()">
+      <label>Швидкість ефекту <span id="speed-val">50%</span></label>
+      <!-- Швидкість від 1% до 100% -->
+      <input type="range" id="speed" min="1" max="100" value="50" oninput="updateUI()">
     </div>
   </div>
 
@@ -330,23 +331,18 @@
     const bulb = document.getElementById('bulb');
     const glow = document.getElementById('glow');
 
-    const speedLabels = {1: 'Повільно 🐢', 2: 'Середня 🚶', 3: 'Швидко 🚀'};
-
     function hexToRgb(hex) {
       const bigint = parseInt(hex.replace('#', ''), 16);
       return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
     }
 
     function updateUI() {
-      // Оновлюємо текст яскравості та швидкості
       document.getElementById('bright-val').innerText = bright.value + '%';
-      document.getElementById('speed-val').innerText = speedLabels[speed.value];
+      document.getElementById('speed-val').innerText = speed.value + '%';
 
-      // Оновлюємо CSS змінні кольорів для лампи
       document.documentElement.style.setProperty('--c1', c1.value);
       document.documentElement.style.setProperty('--c2', c2.value);
 
-      // Зміна прозорості світіння лампи відповідно до яскравості
       const opacity = bright.value / 100;
       glow.style.opacity = opacity * 0.8;
       bulb.style.opacity = Math.max(0.3, opacity);
@@ -357,7 +353,6 @@
       document.querySelectorAll('.grid-2 .btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       
-      // Вібрація при виборі (підтримується в Telegram WebApp)
       if (tg.HapticFeedback) {
         tg.HapticFeedback.impactOccurred('light');
       }
@@ -377,6 +372,7 @@
       }
       const rgb1 = hexToRgb(c1.value);
       const rgb2 = hexToRgb(c2.value);
+      // Передаємо швидкість як чистий відсоток (1..100)
       const command = `CMD:${currentMode},${rgb1.r},${rgb1.g},${rgb1.b},${rgb2.r},${rgb2.g},${rgb2.b},${bright.value},${speed.value}`;
       tg.sendData(command);
     }
@@ -385,10 +381,9 @@
       if (tg.HapticFeedback) {
         tg.HapticFeedback.notificationOccurred('warning');
       }
-      tg.sendData("CMD:0,0,0,0,0,0,0,0,1");
+      tg.sendData("CMD:0,0,0,0,0,0,0,0,50");
     }
 
-    // Ініціалізація початкового вигляду
     updateUI();
   </script>
 </body>
