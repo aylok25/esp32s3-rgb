@@ -38,7 +38,6 @@
       margin-bottom: 10px;
     }
 
-    /* Вибір кольору */
     .color-pickers {
       display: flex;
       justify-content: space-around;
@@ -68,9 +67,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
-    /* Сітки кнопок */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
     .btn {
       padding: 10px 6px;
@@ -90,7 +87,6 @@
       border-color: transparent;
     }
 
-    /* Ползунки */
     .slider-group { margin-bottom: 10px; }
     .slider-group:last-child { margin-bottom: 0; }
     label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
@@ -143,7 +139,7 @@
 
   <h2>🎛️ Пульт ESP32 Pro</h2>
 
-  <!-- ВИБІР ДВОХ КОЛЬОРІВ -->
+  <!-- ПАЛІТРА -->
   <div class="card">
     <div class="card-title">🎨 Палітра кольорів</div>
     <div class="color-pickers">
@@ -172,7 +168,7 @@
     </div>
   </div>
 
-  <!-- АТМОСФЕРНІ ПРЕСЕТИ -->
+  <!-- ПРЕСЕТИ -->
   <div class="card">
     <div class="card-title">🌅 Готові пресети</div>
     <div class="grid-2">
@@ -203,7 +199,7 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    let currentMode = 1; 
+    let currentMode = 1;
 
     const c1 = document.getElementById('color1');
     const c2 = document.getElementById('color2');
@@ -238,7 +234,6 @@
     function sendData() {
       const rgb1 = hexToRgb(c1.value);
       const rgb2 = hexToRgb(c2.value);
-      // Формат: CMD:mode,r1,g1,b1,r2,g2,b2,bright,speed
       const command = `CMD:${currentMode},${rgb1.r},${rgb1.g},${rgb1.b},${rgb2.r},${rgb2.g},${rgb2.b},${bright.value},${speed.value}`;
       tg.sendData(command);
     }
