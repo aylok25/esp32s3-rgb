@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>ESP32 OLED Cyber Controller</title>
+  <title>ESP32 Ultimate Control</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -29,7 +29,6 @@
       user-select: none;
     }
 
-    /* HEADER & CYBER ORB */
     .header-title {
       font-size: 16px;
       font-weight: 800;
@@ -43,12 +42,12 @@
 
     .orb-wrapper {
       position: relative;
-      width: 100px;
-      height: 100px;
+      width: 90px;
+      height: 90px;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .orb-ring {
@@ -57,28 +56,24 @@
       height: 100%;
       border-radius: 50%;
       background: conic-gradient(from 0deg, var(--c1), var(--c2), var(--c1));
-      filter: blur(12px);
+      filter: blur(10px);
       opacity: 0.7;
       animation: rotate 6s linear infinite;
     }
 
     .orb-core {
       position: relative;
-      width: 76px;
-      height: 76px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, var(--c1), var(--c2));
       border: 2px solid rgba(255, 255, 255, 0.5);
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px var(--c1);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
       transition: all 0.3s ease;
     }
 
-    @keyframes rotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* CARD CONTAINERS */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -88,7 +83,6 @@
       max-width: 350px;
       margin-bottom: 12px;
       box-sizing: border-box;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     }
 
     .card-head {
@@ -98,53 +92,10 @@
       letter-spacing: 1px;
       color: #8b949e;
       margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
 
-    /* COLOR PICKERS */
-    .color-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .color-picker-btn {
-      background: #161b22;
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 8px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-    }
-
-    .color-picker-btn span {
-      font-size: 12px;
-      font-weight: 600;
-      color: #c9d1d9;
-    }
-
-    input[type=color] {
-      -webkit-appearance: none;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      background: none;
-    }
-    input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
-    input[type=color]::-webkit-color-swatch {
-      border: 2px solid rgba(255,255,255,0.2);
-      border-radius: 50%;
-    }
-
-    /* GRID BUTTONS */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 
     .btn {
       background: #161b22;
@@ -169,26 +120,63 @@
       box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
     }
 
-    .preset-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 11px;
-      padding: 8px 4px;
+    .btn-auto-weather {
+      width: 100%;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border: none;
+      color: #ffffff;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
+      margin-bottom: 10px;
     }
 
-    /* SLIDERS */
-    .slider-box { margin-bottom: 10px; }
-    .slider-box:last-child { margin-bottom: 0; }
-
-    .slider-label {
-      display: flex;
-      justify-content: space-between;
+    .btn-toggle {
+      width: 100%;
+      background: #1f293d;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 10px;
+      border-radius: 12px;
       font-size: 12px;
-      font-weight: 600;
-      color: #8b949e;
-      margin-bottom: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 8px;
     }
 
+    .sub-panel { display: none; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .color-picker-box {
+      background: #161b22;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #8b949e;
+    }
+
+    input[type=color] {
+      -webkit-appearance: none;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      background: none;
+    }
+    input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type=color]::-webkit-color-swatch { border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; }
+
+    .slider-box { margin-bottom: 10px; }
+    .slider-label { display: flex; justify-content: space-between; font-size: 11px; color: #8b949e; margin-bottom: 4px; }
     .slider-label .val { color: var(--accent); font-weight: 700; }
 
     input[type=range] {
@@ -207,17 +195,14 @@
       border-radius: 50%;
       background: #00f0ff;
       cursor: pointer;
-      box-shadow: 0 0 10px #00f0ff;
     }
 
-    /* ACTION BUTTONS */
     .btn-main {
       width: 100%;
       max-width: 350px;
       padding: 15px;
       font-size: 14px;
       font-weight: 800;
-      letter-spacing: 0.5px;
       border: none;
       border-radius: 14px;
       background: linear-gradient(90deg, #00f0ff, #7000ff);
@@ -227,8 +212,6 @@
       margin-top: 4px;
       margin-bottom: 8px;
     }
-
-    .btn-main:active { transform: scale(0.98); opacity: 0.9; }
 
     .btn-off {
       width: 100%;
@@ -242,38 +225,61 @@
       color: #ff453a;
       cursor: pointer;
     }
-
-    .btn-off:active { transform: scale(0.97); background: rgba(255, 69, 58, 0.2); }
   </style>
 </head>
 <body>
 
   <div class="header-title">ESP32 CYBER CONTROL</div>
 
-  <!-- CYBER ORB VISUALIZER -->
   <div class="orb-wrapper">
     <div class="orb-ring"></div>
     <div class="orb-core" id="orbCore"></div>
   </div>
 
-  <!-- COLOR SELECTION -->
+  <!-- РЕЖИМ АВТО-ПОГОДИ OPEN-METEO -->
   <div class="card">
-    <div class="card-head"><span>🎨 Палітра змішування</span></div>
-    <div class="color-row">
-      <div class="color-picker-btn">
-        <span>Основний</span>
-        <input type="color" id="color1" value="#ff0055" oninput="updateUI()">
+    <button class="btn-auto-weather" onclick="selectMode(11, this)">🌐 Авто-погода (Open-Meteo LIVE)</button>
+    
+    <button class="btn-toggle" onclick="toggleWeatherPanel()">⚙️ Ручне налаштування погоди</button>
+    <div class="sub-panel" id="weatherPanel">
+      <div class="grid-2" style="margin-bottom: 10px;">
+        <button class="btn" onclick="switchWeatherTab('temp')">🌡️ Температура</button>
+        <button class="btn" onclick="switchWeatherTab('cond')">☁️ Умови</button>
       </div>
-      <div class="color-picker-btn">
-        <span>Додатковий</span>
-        <input type="color" id="color2" value="#00e5ff" oninput="updateUI()">
+
+      <div id="weatherTempTab" style="display: none;">
+        <div class="slider-box">
+          <div class="slider-label"><span>Температура:</span><span class="val" id="temp-val">+20°C</span></div>
+          <input type="range" id="tempSlider" min="-20" max="40" value="20" oninput="updateTempColor()">
+        </div>
+      </div>
+
+      <div id="weatherCondTab" style="display: none;">
+        <div class="grid-2">
+          <button class="btn" onclick="selectWeatherCond(8, '#0055ff', '#00d4ff')">🌧️ Дощ</button>
+          <button class="btn" onclick="selectWeatherCond(3, '#a0e7e5', '#ffffff')">❄️ Сніг</button>
+          <button class="btn" onclick="selectWeatherCond(1, '#ffaa00', '#ffaa00')">☀️ Сонячно</button>
+          <button class="btn" onclick="selectWeatherCond(9, '#4b0082', '#ffffff')">🌩️ Гроза</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- MODES -->
+  <!-- КОНСТРУКТОР (4 КОЛЬОРИ) -->
   <div class="card">
-    <div class="card-head"><span>⚡ Вибір ефекту</span></div>
+    <div class="card-head"><span>🛠️ Конструктор анімації (4 кольори)</span></div>
+    <div class="grid-4" style="margin-bottom: 10px;">
+      <div class="color-picker-box"><span>К1</span><input type="color" id="c1" value="#ff0055" oninput="updateUI()"></div>
+      <div class="color-picker-box"><span>К2</span><input type="color" id="c2" value="#00e5ff" oninput="updateUI()"></div>
+      <div class="color-picker-box"><span>К3</span><input type="color" id="c3" value="#ffaa00" oninput="updateUI()"></div>
+      <div class="color-picker-box"><span>К4</span><input type="color" id="c4" value="#9900ff" oninput="updateUI()"></div>
+    </div>
+    <button class="btn" style="width:100%; font-weight:800;" onclick="selectMode(10, this)">▶️ Запустити кастомну анімацію</button>
+  </div>
+
+  <!-- СТАНДАРТНІ РЕЖИМИ -->
+  <div class="card">
+    <div class="card-head"><span>✨ Стандартні режими</span></div>
     <div class="grid-2">
       <button class="btn active" onclick="selectMode(1, this)">🛑 Статика</button>
       <button class="btn" onclick="selectMode(2, this)">⚡ Миготіння</button>
@@ -281,36 +287,19 @@
       <button class="btn" onclick="selectMode(4, this)">🔀 Змішування</button>
       <button class="btn" onclick="selectMode(5, this)">🌈 Веселка</button>
       <button class="btn" onclick="selectMode(6, this)">🚨 Поліція</button>
-      <button class="btn" onclick="selectMode(7, this)" style="grid-column: span 2;">🔥 Живий Вогонь / Свічка</button>
+      <button class="btn" onclick="selectMode(7, this)" style="grid-column: span 2;">🔥 Живий Вогонь</button>
     </div>
   </div>
 
-  <!-- 10 PRESETS -->
-  <div class="card">
-    <div class="card-head"><span>🌅 Готові атмосферні теми</span></div>
-    <div class="grid-2">
-      <button class="btn preset-btn" onclick="applyPreset('#ff5500', '#800080', 4)">🌅 Захід сонця</button>
-      <button class="btn preset-btn" onclick="applyPreset('#00ffcc', '#0022ff', 4)">🌊 Океан</button>
-      <button class="btn preset-btn" onclick="applyPreset('#ff0099', '#00dcff', 4)">🌆 Кіберпанк</button>
-      <button class="btn preset-btn" onclick="applyPreset('#32ff32', '#006414', 4)">🌲 Магічний ліс</button>
-      <button class="btn preset-btn" onclick="applyPreset('#00ffaa', '#9900ff', 4)">🌌 Сяйво</button>
-      <button class="btn preset-btn" onclick="applyPreset('#ff1100', '#ff8800', 4)">🌋 Рідка лава</button>
-      <button class="btn preset-btn" onclick="applyPreset('#a0e7e5', '#ffffff', 4)">❄️ Арктика</button>
-      <button class="btn preset-btn" onclick="applyPreset('#e0b0ff', '#8a2be2', 4)">💜 Лаванда</button>
-      <button class="btn preset-btn" onclick="applyPreset('#ff6b6b', '#ffe66d', 4)">🍑 Персик</button>
-      <button class="btn preset-btn" onclick="applyPreset('#0000ff', '#ff00ff', 4)">🪩 Диско-паті</button>
-    </div>
-  </div>
-
-  <!-- SLIDERS -->
+  <!-- ПАРАМЕТРИ -->
   <div class="card">
     <div class="card-head"><span>⚙️ Параметри</span></div>
     <div class="slider-box">
       <div class="slider-label"><span>Яскравість</span><span class="val" id="bright-val">50%</span></div>
       <input type="range" id="brightness" min="5" max="100" value="50" oninput="updateUI()">
     </div>
-    <div class="slider-box" style="margin-top: 12px;">
-      <div class="slider-label"><span>Швидкість ефекту</span><span class="val" id="speed-val">50%</span></div>
+    <div class="slider-box" style="margin-top: 8px;">
+      <div class="slider-label"><span>Швидкість</span><span class="val" id="speed-val">50%</span></div>
       <input type="range" id="speed" min="1" max="100" value="50" oninput="updateUI()">
     </div>
   </div>
@@ -324,8 +313,10 @@
 
     let currentMode = 1;
 
-    const c1 = document.getElementById('color1');
-    const c2 = document.getElementById('color2');
+    const c1 = document.getElementById('c1');
+    const c2 = document.getElementById('c2');
+    const c3 = document.getElementById('c3');
+    const c4 = document.getElementById('c4');
     const bright = document.getElementById('brightness');
     const speed = document.getElementById('speed');
     const orbCore = document.getElementById('orbCore');
@@ -335,28 +326,40 @@
       return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
     }
 
-    function updateUI() {
-      document.getElementById('bright-val').innerText = bright.value + '%';
-      document.getElementById('speed-val').innerText = speed.value + '%';
-
-      document.documentElement.style.setProperty('--c1', c1.value);
-      document.documentElement.style.setProperty('--c2', c2.value);
-
-      const opacity = bright.value / 100;
-      orbCore.style.opacity = Math.max(0.2, opacity);
+    function toggleWeatherPanel() {
+      const panel = document.getElementById('weatherPanel');
+      panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
     }
 
-    function selectMode(mode, btn) {
-      currentMode = mode;
-      document.querySelectorAll('.grid-2 .btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    function switchWeatherTab(tab) {
+      document.getElementById('weatherTempTab').style.display = (tab === 'temp') ? 'block' : 'none';
+      document.getElementById('weatherCondTab').style.display = (tab === 'cond') ? 'block' : 'none';
+      if(tab === 'temp') updateTempColor();
+    }
+
+    function updateTempColor() {
+      const temp = parseInt(document.getElementById('tempSlider').value);
+      document.getElementById('temp-val').innerText = (temp > 0 ? '+' : '') + temp + '°C';
       
-      if (tg.HapticFeedback) {
-        tg.HapticFeedback.impactOccurred('light');
+      let r=0, g=0, b=0;
+      if(temp <= 0) {
+        b = 255; g = Math.round((temp + 20) * 12.7);
+      } else if(temp <= 20) {
+        g = 255; b = Math.round((20 - temp) * 12.7); r = Math.round(temp * 12.7);
+      } else {
+        r = 255; g = Math.round((40 - temp) * 12.7);
       }
+      c1.value = rgbToHex(r, g, b);
+      c2.value = c1.value;
+      currentMode = 1;
+      updateUI();
     }
 
-    function applyPreset(hex1, hex2, mode) {
+    function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    function selectWeatherCond(mode, hex1, hex2) {
       c1.value = hex1;
       c2.value = hex2;
       currentMode = mode;
@@ -364,21 +367,36 @@
       sendData();
     }
 
+    function updateUI() {
+      document.getElementById('bright-val').innerText = bright.value + '%';
+      document.getElementById('speed-val').innerText = speed.value + '%';
+
+      document.documentElement.style.setProperty('--c1', c1.value);
+      document.documentElement.style.setProperty('--c2', c2.value);
+
+      orbCore.style.opacity = Math.max(0.2, bright.value / 100);
+    }
+
+    function selectMode(mode, btn) {
+      currentMode = mode;
+      document.querySelectorAll('.btn, .btn-auto-weather').forEach(b => b.classList.remove('active'));
+      if(btn) btn.classList.add('active');
+    }
+
     function sendData() {
-      if (tg.HapticFeedback) {
-        tg.HapticFeedback.notificationOccurred('success');
-      }
+      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
       const rgb1 = hexToRgb(c1.value);
       const rgb2 = hexToRgb(c2.value);
-      const command = `CMD:${currentMode},${rgb1.r},${rgb1.g},${rgb1.b},${rgb2.r},${rgb2.g},${rgb2.b},${bright.value},${speed.value}`;
+      const rgb3 = hexToRgb(c3.value);
+      const rgb4 = hexToRgb(c4.value);
+      
+      const command = `CMD:${currentMode},${rgb1.r},${rgb1.g},${rgb1.b},${rgb2.r},${rgb2.g},${rgb2.b},${rgb3.r},${rgb3.g},${rgb3.b},${rgb4.r},${rgb4.g},${rgb4.b},${bright.value},${speed.value}`;
       tg.sendData(command);
     }
 
     function turnOff() {
-      if (tg.HapticFeedback) {
-        tg.HapticFeedback.notificationOccurred('warning');
-      }
-      tg.sendData("CMD:0,0,0,0,0,0,0,0,50");
+      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+      tg.sendData("CMD:0,0,0,0,0,0,0,0,0,0,0,0,0,0,50");
     }
 
     updateUI();
