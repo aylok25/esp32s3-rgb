@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RGB Controller</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--tg-theme-bg-color, #18222d);
+      color: var(--tg-theme-text-color, #ffffff);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      margin: 0;
+    }
+    h2 { margin-bottom: 20px; }
+    .color-preview {
+      width: 130px;
+      height: 130px;
+      border-radius: 24px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      background-color: rgb(255, 0, 0);
+      transition: background-color 0.1s ease;
+    }
+    .slider-group {
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 18px;
+    }
+    label {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+    input[type=range] {
+      width: 100%;
+      height: 10px;
+      border-radius: 5px;
+      outline: none;
+      -webkit-appearance: none;
+      background: #333;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+    }
+    #red { accent-color: #ff4d4d; }
+    #green { accent-color: #4dff4d; }
+    #blue { accent-color: #4d4dff; }
+    
+    button {
+      width: 100%;
+      max-width: 320px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 14px;
+      background-color: var(--tg-theme-button-color, #2481cc);
+      color: var(--tg-theme-button-text-color, #ffffff);
+      cursor: pointer;
+      margin-top: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    button:active { transform: scale(0.98); }
+  </style>
+</head>
+<body>
+
+  <h2>🎨 Палітра ESP32-S3</h2>
+  <div id="preview" class="color-preview"></div>
+
+  <div class="slider-group">
+    <label>Червоний (R): <span id="r-val">255</span></label>
+    <input type="range" id="red" min="0" max="255" value="255">
+  </div>
+
+  <div class="slider-group">
+    <label>Зелений (G): <span id="g-val">0</span></label>
+    <input type="range" id="green" min="0" max="255" value="0">
+  </div>
+
+  <div class="slider-group">
+    <label>Синій (B): <span id="b-val">0</span></label>
+    <input type="range" id="blue" min="0" max="255" value="0">
+  </div>
+
+  <button id="send-btn">Застосувати колір ✨</button>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // Розгортаємо на весь екран
+
+    const r = document.getElementById('red');
+    const g = document.getElementById('green');
+    const b = document.getElementById('blue');
+    const preview = document.getElementById('preview');
+
+    function updateColor() {
+      document.getElementById('r-val').innerText = r.value;
+      document.getElementById('g-val').innerText = g.value;
+      document.getElementById('b-val').innerText = b.value;
+      preview.style.backgroundColor = `rgb(${r.value}, ${g.value}, ${b.value})`;
+    }
+
+    r.addEventListener('input', updateColor);
+    g.addEventListener('input', updateColor);
+    b.addEventListener('input', updateColor);
+
+    document.getElementById('send-btn').addEventListener('click', () => {
+      // Відправляємо корінати у форматі "COLOR:R,G,B" назад боту
+      const data = `COLOR:${r.value},${g.value},${b.value}`;
+      tg.sendData(data); 
+    });
+  </script>
+</body>
+</html>
