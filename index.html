@@ -40,6 +40,7 @@
       margin: 4px 0 12px 0;
     }
 
+    /* 3D CYBER ORB VISUALIZER */
     .orb-wrapper {
       position: relative;
       width: 90px;
@@ -47,7 +48,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
     }
 
     .orb-ring {
@@ -72,8 +73,18 @@
       transition: all 0.3s ease;
     }
 
+    .preview-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
     @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    /* CARDS & BUTTONS */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -245,12 +256,14 @@
 
   <div class="header-title">ESP32 CYBER CONTROL</div>
 
+  <!-- 3D VISUALIZER -->
   <div class="orb-wrapper">
     <div class="orb-ring"></div>
     <div class="orb-core" id="orbCore"></div>
   </div>
+  <div class="preview-badge">👁️ Попередній перегляд</div>
 
-  <!-- ІНДИКАТОР WI-FI СИГНАЛУ -->
+  <!-- ПОГОДА ТА ІНДИКАТОРИ -->
   <div class="card">
     <button class="btn-wifi" onclick="selectMode(12, this)">📡 Сила Wi-Fi сигналу (LIVE)</button>
     <button class="btn-auto-weather" onclick="selectMode(11, this)">🌐 Авто-погода (Open-Meteo LIVE)</button>
@@ -258,23 +271,26 @@
     <button class="btn-toggle" onclick="toggleWeatherPanel()">⚙️ Ручне налаштування погоди</button>
     <div class="sub-panel" id="weatherPanel">
       <div class="grid-2" style="margin-bottom: 10px;">
-        <button class="btn" onclick="switchWeatherTab('temp')">🌡️ Температура</button>
-        <button class="btn" onclick="switchWeatherTab('cond')">☁️ Умови</button>
+        <button class="btn active" id="tabBtnTemp" onclick="switchWeatherTab('temp')">🌡️ Температура</button>
+        <button class="btn" id="tabBtnCond" onclick="switchWeatherTab('cond')">☁️ Умови</button>
       </div>
 
-      <div id="weatherTempTab" style="display: none;">
+      <!-- ВКЛАДКА 1: ТЕМПЕРАТУРА -->
+      <div id="weatherTempTab">
         <div class="slider-box">
           <div class="slider-label"><span>Температура:</span><span class="val" id="temp-val">+20°C</span></div>
           <input type="range" id="tempSlider" min="-20" max="40" value="20" oninput="updateTempColor()">
         </div>
       </div>
 
+      <!-- ВКЛАДКА 2: ПОГОДНІ УМОВИ -->
       <div id="weatherCondTab" style="display: none;">
         <div class="grid-2">
-          <button class="btn" onclick="selectWeatherCond(8, '#0055ff', '#00d4ff')">🌧️ Дощ</button>
-          <button class="btn" onclick="selectWeatherCond(3, '#a0e7e5', '#ffffff')">❄️ Сніг</button>
-          <button class="btn" onclick="selectWeatherCond(1, '#ffaa00', '#ffaa00')">☀️ Сонячно</button>
-          <button class="btn" onclick="selectWeatherCond(9, '#4b0082', '#ffffff')">🌩️ Гроза</button>
+          <button class="btn weather-cond-btn" onclick="previewWeatherCond(8, '#0055ff', '#00d4ff', this)">🌧️ Дощ</button>
+          <button class="btn weather-cond-btn" onclick="previewWeatherCond(3, '#a0e7e5', '#ffffff', this)">❄️ Сніг</button>
+          <button class="btn weather-cond-btn" onclick="previewWeatherCond(1, '#ffaa00', '#ffaa00', this)">☀️ Сонячно</button>
+          <button class="btn weather-cond-btn" onclick="previewWeatherCond(9, '#4b0082', '#ffffff', this)">🌩️ Гроза</button>
+          <button class="btn weather-cond-btn" style="grid-column: span 2;" onclick="previewWeatherCond(1, '#778899', '#778899', this)">🌫️ Туман</button>
         </div>
       </div>
     </div>
@@ -289,7 +305,7 @@
       <div class="color-picker-box"><span>К3</span><input type="color" id="c3" value="#ffaa00" oninput="updateUI()"></div>
       <div class="color-picker-box"><span>К4</span><input type="color" id="c4" value="#9900ff" oninput="updateUI()"></div>
     </div>
-    <button class="btn" style="width:100%; font-weight:800;" onclick="selectMode(10, this)">▶️ Запустити кастомну анімацію</button>
+    <button class="btn" style="width:100%; font-weight:800;" onclick="selectMode(10, this)">▶️ Кастомна анімація</button>
   </div>
 
   <!-- СТАНДАРТНІ РЕЖИМИ -->
@@ -343,15 +359,26 @@
 
     function toggleWeatherPanel() {
       const panel = document.getElementById('weatherPanel');
-      panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+      const isVisible = panel.style.display === 'block';
+      panel.style.display = isVisible ? 'none' : 'block';
+      if (!isVisible) {
+        switchWeatherTab('temp');
+      }
     }
 
     function switchWeatherTab(tab) {
       document.getElementById('weatherTempTab').style.display = (tab === 'temp') ? 'block' : 'none';
       document.getElementById('weatherCondTab').style.display = (tab === 'cond') ? 'block' : 'none';
-      if(tab === 'temp') updateTempColor();
+      
+      document.getElementById('tabBtnTemp').classList.toggle('active', tab === 'temp');
+      document.getElementById('tabBtnCond').classList.toggle('active', tab === 'cond');
+
+      if(tab === 'temp') {
+        updateTempColor();
+      }
     }
 
+    // ПОПЕРЕДНІЙ ПЕРЕГЛЯД ТЕМПЕРАТУРИ (БЕЗ АВТО-ВІДПРАВКИ)
     function updateTempColor() {
       const temp = parseInt(document.getElementById('tempSlider').value);
       document.getElementById('temp-val').innerText = (temp > 0 ? '+' : '') + temp + '°C';
@@ -366,7 +393,7 @@
       }
       c1.value = rgbToHex(r, g, b);
       c2.value = c1.value;
-      currentMode = 1;
+      currentMode = 1; // Статичний режим для температури
       updateUI();
     }
 
@@ -374,12 +401,17 @@
       return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
     }
 
-    function selectWeatherCond(mode, hex1, hex2) {
+    // ПОПЕРЕДНІЙ ПЕРЕГЛЯД ПОГОДНИХ УМОВ (БЕЗ АВТО-ВІДПРАВКИ)
+    function previewWeatherCond(mode, hex1, hex2, btn) {
       c1.value = hex1;
       c2.value = hex2;
       currentMode = mode;
+      
+      document.querySelectorAll('.weather-cond-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
       updateUI();
-      sendData();
     }
 
     function updateUI() {
@@ -396,8 +428,10 @@
       currentMode = mode;
       document.querySelectorAll('.btn, .btn-auto-weather, .btn-wifi').forEach(b => b.classList.remove('active'));
       if(btn) btn.classList.add('active');
+      if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
     }
 
+    // ВІДПРАВКА ДАНИХ НА ESP32 ТІЛЬКИ ПРИ НАТИСКАННІ КНОПКИ
     function sendData() {
       if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
       const rgb1 = hexToRgb(c1.value);
