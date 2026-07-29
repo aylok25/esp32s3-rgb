@@ -134,6 +134,20 @@
       margin-bottom: 10px;
     }
 
+    .btn-wifi {
+      width: 100%;
+      background: linear-gradient(135deg, #32d74b, #10b981);
+      border: none;
+      color: #000000;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(50, 215, 75, 0.3);
+      margin-bottom: 10px;
+    }
+
     .btn-toggle {
       width: 100%;
       background: #1f293d;
@@ -236,8 +250,9 @@
     <div class="orb-core" id="orbCore"></div>
   </div>
 
-  <!-- РЕЖИМ АВТО-ПОГОДИ OPEN-METEO -->
+  <!-- ІНДИКАТОР WI-FI СИГНАЛУ -->
   <div class="card">
+    <button class="btn-wifi" onclick="selectMode(12, this)">📡 Сила Wi-Fi сигналу (LIVE)</button>
     <button class="btn-auto-weather" onclick="selectMode(11, this)">🌐 Авто-погода (Open-Meteo LIVE)</button>
     
     <button class="btn-toggle" onclick="toggleWeatherPanel()">⚙️ Ручне налаштування погоди</button>
@@ -379,7 +394,7 @@
 
     function selectMode(mode, btn) {
       currentMode = mode;
-      document.querySelectorAll('.btn, .btn-auto-weather').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.btn, .btn-auto-weather, .btn-wifi').forEach(b => b.classList.remove('active'));
       if(btn) btn.classList.add('active');
     }
 
