@@ -131,6 +131,20 @@
       box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
     }
 
+    .btn-bme {
+      width: 100%;
+      background: linear-gradient(135deg, #ff9500, #ff5e00);
+      border: none;
+      color: #ffffff;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 149, 0, 0.4);
+      margin-bottom: 8px;
+    }
+
     .btn-bt {
       width: 100%;
       background: linear-gradient(135deg, #0071e3, #00c6ff);
@@ -276,8 +290,9 @@
   </div>
   <div class="preview-badge">👁️ Попередній перегляд</div>
 
-  <!-- БЕЗДРОТОВІ МЕРЕЖІ ТА ПОГОДА -->
+  <!-- ДАТЧИКИ ТА МЕРЕЖІ -->
   <div class="card">
+    <button class="btn-bme" onclick="selectMode(14, this)">🏠 Локальна метеостанція (BME280 LIVE)</button>
     <button class="btn-bt" onclick="selectMode(13, this)">🔵 Bluetooth сигнал (LIVE)</button>
     <button class="btn-wifi" onclick="selectMode(12, this)">📡 Сила Wi-Fi сигналу (LIVE)</button>
     <button class="btn-auto-weather" onclick="selectMode(11, this)">🌐 Авто-погода (Open-Meteo LIVE)</button>
@@ -432,7 +447,7 @@
 
     function selectMode(mode, btn) {
       currentMode = mode;
-      document.querySelectorAll('.btn, .btn-auto-weather, .btn-wifi, .btn-bt').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.btn, .btn-auto-weather, .btn-wifi, .btn-bt, .btn-bme').forEach(b => b.classList.remove('active'));
       if(btn) btn.classList.add('active');
       if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
     }
