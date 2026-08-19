@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>ESP32 Ultimate Control</title>
+  <title>ESP32 Cyber Control</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -37,17 +37,18 @@
       background: linear-gradient(90deg, #00f0ff, #ff007f);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin: 4px 0 12px 0;
+      margin: 4px 0 10px 0;
     }
 
+    /* 3D CYBER ORB PREVIEW */
     .orb-wrapper {
       position: relative;
-      width: 90px;
-      height: 90px;
+      width: 86px;
+      height: 86px;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .orb-ring {
@@ -63,34 +64,38 @@
 
     .orb-core {
       position: relative;
-      width: 70px;
-      height: 70px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, var(--c1), var(--c2));
       border: 2px solid rgba(255, 255, 255, 0.5);
       box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
     }
 
     .preview-badge {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 700;
-      color: #8b949e;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      color: var(--accent);
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
       margin-bottom: 12px;
+      text-align: center;
     }
 
     @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    /* CARDS & BUTTONS */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 14px;
+      padding: 12px;
       width: 100%;
       max-width: 350px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       box-sizing: border-box;
     }
 
@@ -100,13 +105,13 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       color: #8b949e;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 
-    .btn {
+    .btn, .mode-btn {
       background: #161b22;
       border: 1px solid var(--card-border);
       color: #c9d1d9;
@@ -119,69 +124,66 @@
       text-align: center;
     }
 
-    .btn:active { transform: scale(0.96); }
+    .btn:active, .mode-btn:active { transform: scale(0.97); }
 
-    .btn.active {
-      background: linear-gradient(135deg, #00f0ff, #0077ff);
-      color: #000000;
-      border-color: #00f0ff;
-      font-weight: 800;
-      box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+    /* ПІДСВІЧУВАННЯ ОБРАНОГО РЕЖИМУ */
+    .mode-btn.active, .btn.active {
+      background: linear-gradient(135deg, #00f0ff, #0077ff) !important;
+      color: #000000 !important;
+      border-color: #00f0ff !important;
+      font-weight: 800 !important;
+      box-shadow: 0 0 14px rgba(0, 240, 255, 0.45) !important;
     }
 
     .btn-bme {
       width: 100%;
-      background: linear-gradient(135deg, #ff9500, #ff5e00);
-      border: none;
-      color: #ffffff;
-      padding: 12px;
+      background: rgba(255, 149, 0, 0.12);
+      border: 1px solid rgba(255, 149, 0, 0.4);
+      color: #ff9500;
+      padding: 11px;
       border-radius: 12px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(255, 149, 0, 0.4);
       margin-bottom: 8px;
     }
 
     .btn-bt {
       width: 100%;
-      background: linear-gradient(135deg, #0071e3, #00c6ff);
-      border: none;
-      color: #ffffff;
-      padding: 12px;
+      background: rgba(0, 122, 255, 0.12);
+      border: 1px solid rgba(0, 122, 255, 0.4);
+      color: #007aff;
+      padding: 11px;
       border-radius: 12px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0, 113, 227, 0.4);
       margin-bottom: 8px;
     }
 
     .btn-wifi {
       width: 100%;
-      background: linear-gradient(135deg, #32d74b, #10b981);
-      border: none;
-      color: #000000;
-      padding: 12px;
+      background: rgba(50, 215, 75, 0.12);
+      border: 1px solid rgba(50, 215, 75, 0.4);
+      color: #32d74b;
+      padding: 11px;
       border-radius: 12px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(50, 215, 75, 0.3);
       margin-bottom: 8px;
     }
 
     .btn-auto-weather {
       width: 100%;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      border: none;
-      color: #ffffff;
-      padding: 12px;
+      background: rgba(0, 210, 255, 0.12);
+      border: 1px solid rgba(0, 210, 255, 0.4);
+      color: #00d2ff;
+      padding: 11px;
       border-radius: 12px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
       margin-bottom: 8px;
     }
 
@@ -195,10 +197,10 @@
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
-    .sub-panel { display: none; animation: fadeIn 0.3s ease; }
+    .sub-panel { display: none; animation: fadeIn 0.25s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .color-picker-box {
@@ -226,7 +228,7 @@
     input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
     input[type=color]::-webkit-color-swatch { border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
-    .slider-box { margin-bottom: 10px; }
+    .slider-box { margin-bottom: 8px; }
     .slider-label { display: flex; justify-content: space-between; font-size: 11px; color: #8b949e; margin-bottom: 4px; }
     .slider-label .val { color: var(--accent); font-weight: 700; }
 
@@ -251,7 +253,7 @@
     .btn-stealth {
       width: 100%;
       background: rgba(255, 255, 255, 0.06);
-      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border: 1px dashed rgba(255, 255, 255, 0.25);
       color: #c9d1d9;
       padding: 8px;
       border-radius: 10px;
@@ -259,10 +261,9 @@
       font-weight: 600;
       cursor: pointer;
       margin-top: 6px;
-      transition: all 0.2s ease;
     }
-    .btn-stealth:active { background: rgba(255, 255, 255, 0.15); }
 
+    /* ГОЛОВНА КНОПКА ЗАСТОСУВАННЯ */
     .btn-main {
       width: 100%;
       max-width: 350px;
@@ -297,22 +298,23 @@
 
   <div class="header-title">ESP32 CYBER CONTROL</div>
 
+  <!-- ЖИВИЙ ПОПЕРЕДНІЙ ПЕРЕГЛЯД -->
   <div class="orb-wrapper">
     <div class="orb-ring"></div>
     <div class="orb-core" id="orbCore"></div>
   </div>
-  <div class="preview-badge" id="previewBadge">👁️ Попередній перегляд</div>
+  <div class="preview-badge" id="previewBadge">✨ Обрано: Статика</div>
 
-  <!-- ДАТЧИКИ ТА МЕРЕЖІ -->
+  <!-- ДАТЧИКИ ТА РОЗУМНІ РЕЖИМИ -->
   <div class="card">
-    <button class="btn-bme" onclick="selectMode(14, this)">🏠 Локальна метеостанція (BME280 LIVE)</button>
-    <button class="btn-bt" onclick="selectMode(13, this)">🔵 Bluetooth сигнал (LIVE)</button>
-    <button class="btn-wifi" onclick="selectMode(12, this)">📡 Сила Wi-Fi сигналу (LIVE)</button>
-    <button class="btn-auto-weather" onclick="selectMode(11, this)">🌐 Авто-погода (Open-Meteo LIVE)</button>
+    <button class="mode-btn btn-bme" onclick="selectMode(14, this, 'Метеостанція (AHT20+BMP280)')">🏠 Локальна метеостанція (BME280)</button>
+    <button class="mode-btn btn-bt" onclick="selectMode(13, this, 'Bluetooth Сканер')">🔵 Bluetooth сигнал (LIVE)</button>
+    <button class="mode-btn btn-wifi" onclick="selectMode(12, this, 'Wi-Fi Сканер')">📡 Сила Wi-Fi сигналу (LIVE)</button>
+    <button class="mode-btn btn-auto-weather" onclick="selectMode(11, this, 'Авто-погода (Open-Meteo)')">🌐 Авто-погода (Open-Meteo LIVE)</button>
     
-    <button class="btn-toggle" onclick="toggleWeatherPanel()">⚙️ Ручне налаштування погоди</button>
+    <button class="btn-toggle" onclick="toggleWeatherPanel()">⚙️ Ручний вибір погоди</button>
     <div class="sub-panel" id="weatherPanel">
-      <div class="grid-2" style="margin-bottom: 10px;">
+      <div class="grid-2" style="margin-bottom: 8px;">
         <button class="btn active" id="tabBtnTemp" onclick="switchWeatherTab('temp')">🌡️ Температура</button>
         <button class="btn" id="tabBtnCond" onclick="switchWeatherTab('cond')">☁️ Умови</button>
       </div>
@@ -326,12 +328,11 @@
 
       <div id="weatherCondTab" style="display: none;">
         <div class="grid-2">
-          <!-- Режими: 8=Дощ, 15=Сніг, 16=Сонце, 9=Гроза, 17=Туман -->
-          <button class="btn weather-cond-btn" onclick="previewWeatherCond(8, '#0055ff', '#00d4ff', this)">🌧️ Дощ</button>
-          <button class="btn weather-cond-btn" onclick="previewWeatherCond(15, '#a0e7e5', '#ffffff', this)">❄️ Сніг</button>
-          <button class="btn weather-cond-btn" onclick="previewWeatherCond(16, '#ffaa00', '#ffaa00', this)">☀️ Сонячно</button>
-          <button class="btn weather-cond-btn" onclick="previewWeatherCond(9, '#4b0082', '#ffffff', this)">🌩️ Гроза</button>
-          <button class="btn weather-cond-btn" style="grid-column: span 2;" onclick="previewWeatherCond(17, '#778899', '#778899', this)">🌫️ Туман</button>
+          <button class="mode-btn" onclick="selectWeatherCond(8, '#0055ff', '#00d4ff', this, '🌧️ Дощ')">🌧️ Дощ</button>
+          <button class="mode-btn" onclick="selectWeatherCond(15, '#a0e7e5', '#ffffff', this, '❄️ Сніг')">❄️ Сніг</button>
+          <button class="mode-btn" onclick="selectWeatherCond(16, '#ffaa00', '#ffaa00', this, '☀️ Сонце')">☀️ Сонячно</button>
+          <button class="mode-btn" onclick="selectWeatherCond(9, '#4b0082', '#ffffff', this, '🌩️ Гроза')">🌩️ Гроза</button>
+          <button class="mode-btn" style="grid-column: span 2;" onclick="selectWeatherCond(17, '#778899', '#778899', this, '🌫️ Туман')">🌫️ Туман</button>
         </div>
       </div>
     </div>
@@ -340,26 +341,26 @@
   <!-- КОНСТРУКТОР (4 КОЛЬОРИ) -->
   <div class="card">
     <div class="card-head"><span>🛠️ Конструктор анімації (4 кольори)</span></div>
-    <div class="grid-4" style="margin-bottom: 10px;">
+    <div class="grid-4" style="margin-bottom: 8px;">
       <div class="color-picker-box"><span>К1</span><input type="color" id="c1" value="#ff0055" oninput="updateUI()"></div>
       <div class="color-picker-box"><span>К2</span><input type="color" id="c2" value="#00e5ff" oninput="updateUI()"></div>
       <div class="color-picker-box"><span>К3</span><input type="color" id="c3" value="#ffaa00" oninput="updateUI()"></div>
       <div class="color-picker-box"><span>К4</span><input type="color" id="c4" value="#9900ff" oninput="updateUI()"></div>
     </div>
-    <button class="btn" style="width:100%; font-weight:800;" onclick="selectMode(10, this)">▶️ Кастомна анімація</button>
+    <button class="mode-btn" style="width:100%; font-weight:800;" onclick="selectMode(10, this, 'Кастомна 4-колірна анімація')">▶️ Обрати кастомну анімацію</button>
   </div>
 
   <!-- СТАНДАРТНІ РЕЖИМИ -->
   <div class="card">
     <div class="card-head"><span>✨ Стандартні режими</span></div>
     <div class="grid-2">
-      <button class="btn active" onclick="selectMode(1, this)">🛑 Статика</button>
-      <button class="btn" onclick="selectMode(2, this)">⚡ Миготіння</button>
-      <button class="btn" onclick="selectMode(3, this)">🌊 Дихання</button>
-      <button class="btn" onclick="selectMode(4, this)">🔀 Змішування</button>
-      <button class="btn" onclick="selectMode(5, this)">🌈 Веселка</button>
-      <button class="btn" onclick="selectMode(6, this)">🚨 Поліція</button>
-      <button class="btn" onclick="selectMode(7, this)" style="grid-column: span 2;">🔥 Живий Вогонь</button>
+      <button class="mode-btn active" onclick="selectMode(1, this, 'Статика')">🛑 Статика</button>
+      <button class="mode-btn" onclick="selectMode(2, this, 'Миготіння')">⚡ Миготіння</button>
+      <button class="mode-btn" onclick="selectMode(3, this, 'Дихання')">🌊 Дихання</button>
+      <button class="mode-btn" onclick="selectMode(4, this, 'Змішування')">🔀 Змішування</button>
+      <button class="mode-btn" onclick="selectMode(5, this, 'Веселка')">🌈 Веселка</button>
+      <button class="mode-btn" onclick="selectMode(6, this, 'Поліція')">🚨 Поліція</button>
+      <button class="mode-btn" onclick="selectMode(7, this, 'Живий Вогонь')" style="grid-column: span 2;">🔥 Живий Вогонь</button>
     </div>
   </div>
 
@@ -371,20 +372,22 @@
       <input type="range" id="brightness" min="0" max="100" value="50" oninput="updateUI()">
       <button class="btn-stealth" onclick="setStealthMode()">🌙 Тільки екран (LED 0%)</button>
     </div>
-    <div class="slider-box" style="margin-top: 10px;">
+    <div class="slider-box" style="margin-top: 8px;">
       <div class="slider-label"><span>Швидкість</span><span class="val" id="speed-val">50%</span></div>
       <input type="range" id="speed" min="1" max="100" value="50" oninput="updateUI()">
     </div>
   </div>
 
+  <!-- КНОПКИ ДІЇ -->
   <button class="btn-main" onclick="sendData()">ЗАСТОСУВАТИ НАЛАШТУВАННЯ ✨</button>
-  <button class="btn-off" onclick="turnOff()">ПОВНИЙ СТАНДБАЙ (ВИМКНУТИ ВСЕ) ⬛</button>
+  <button class="btn-off" onclick="turnOff()">ВИМКНУТИ ПРИЛАД (STANDBY) ⬛</button>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
     let currentMode = 1;
+    let selectedModeName = "Статика";
 
     const c1 = document.getElementById('c1');
     const c2 = document.getElementById('c2');
@@ -400,21 +403,21 @@
       return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
     }
 
+    function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
     function toggleWeatherPanel() {
       const panel = document.getElementById('weatherPanel');
-      const isVisible = panel.style.display === 'block';
-      panel.style.display = isVisible ? 'none' : 'block';
-      if (!isVisible) switchWeatherTab('temp');
+      panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
     }
 
     function switchWeatherTab(tab) {
       document.getElementById('weatherTempTab').style.display = (tab === 'temp') ? 'block' : 'none';
       document.getElementById('weatherCondTab').style.display = (tab === 'cond') ? 'block' : 'none';
-      
       document.getElementById('tabBtnTemp').classList.toggle('active', tab === 'temp');
       document.getElementById('tabBtnCond').classList.toggle('active', tab === 'cond');
-
-      if(tab === 'temp') updateTempColor();
+      if (tab === 'temp') updateTempColor();
     }
 
     function updateTempColor() {
@@ -432,19 +435,28 @@
       c1.value = rgbToHex(r, g, b);
       c2.value = c1.value;
       currentMode = 1;
+      selectedModeName = "Температура " + (temp > 0 ? '+' : '') + temp + "°C";
       updateUI();
     }
 
-    function rgbToHex(r, g, b) {
-      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    }
-
-    function previewWeatherCond(mode, hex1, hex2, btn) {
+    function selectWeatherCond(mode, hex1, hex2, btn, name) {
       c1.value = hex1;
       c2.value = hex2;
       currentMode = mode;
+      selectedModeName = name;
       
-      document.querySelectorAll('.weather-cond-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+      updateUI();
+    }
+
+    function selectMode(mode, btn, name) {
+      currentMode = mode;
+      selectedModeName = name;
+
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
 
       if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
@@ -454,7 +466,7 @@
     function setStealthMode() {
       bright.value = 0;
       updateUI();
-      sendData();
+      if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     }
 
     function updateUI() {
@@ -466,21 +478,15 @@
       document.documentElement.style.setProperty('--c2', c2.value);
 
       if (bVal === 0) {
-        orbCore.style.opacity = 0.05;
-        previewBadge.innerText = '🌙 Світлодіод вимкнено (Тільки екран)';
+        orbCore.style.opacity = 0.08;
+        previewBadge.innerText = "🌙 Тільки екран: " + selectedModeName;
       } else {
         orbCore.style.opacity = Math.max(0.2, bVal / 100);
-        previewBadge.innerText = '👁️ Попередній перегляд';
+        previewBadge.innerText = "✨ Обрано: " + selectedModeName;
       }
     }
 
-    function selectMode(mode, btn) {
-      currentMode = mode;
-      document.querySelectorAll('.btn, .btn-auto-weather, .btn-wifi, .btn-bt, .btn-bme').forEach(b => b.classList.remove('active'));
-      if(btn) btn.classList.add('active');
-      if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    }
-
+    // ВІДПРАВКА НА ESP32 ТІЛЬКИ ПРИ НАТИСКАННІ КНОПКИ
     function sendData() {
       if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
       const rgb1 = hexToRgb(c1.value);
