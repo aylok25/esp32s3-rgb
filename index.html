@@ -250,6 +250,21 @@
       cursor: pointer;
     }
 
+    .btn-stealth {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      color: #c9d1d9;
+      padding: 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-stealth:active { background: rgba(255, 255, 255, 0.15); }
+
     .btn-main {
       width: 100%;
       max-width: 350px;
@@ -288,7 +303,7 @@
     <div class="orb-ring"></div>
     <div class="orb-core" id="orbCore"></div>
   </div>
-  <div class="preview-badge">👁️ Попередній перегляд</div>
+  <div class="preview-badge" id="previewBadge">👁️ Попередній перегляд</div>
 
   <!-- ДАТЧИКИ ТА МЕРЕЖІ -->
   <div class="card">
@@ -353,17 +368,19 @@
   <div class="card">
     <div class="card-head"><span>⚙️ Параметри</span></div>
     <div class="slider-box">
-      <div class="slider-label"><span>Яскравість</span><span class="val" id="bright-val">50%</span></div>
-      <input type="range" id="brightness" min="5" max="100" value="50" oninput="updateUI()">
+      <div class="slider-label"><span>Яскравість LED</span><span class="val" id="bright-val">50%</span></div>
+      <!-- Діапазон від 0% до 100% -->
+      <input type="range" id="brightness" min="0" max="100" value="50" oninput="updateUI()">
+      <button class="btn-stealth" onclick="setStealthMode()">🌙 Тільки екран (LED 0%)</button>
     </div>
-    <div class="slider-box" style="margin-top: 8px;">
+    <div class="slider-box" style="margin-top: 10px;">
       <div class="slider-label"><span>Швидкість</span><span class="val" id="speed-val">50%</span></div>
       <input type="range" id="speed" min="1" max="100" value="50" oninput="updateUI()">
     </div>
   </div>
 
   <button class="btn-main" onclick="sendData()">ЗАСТОСУВАТИ НАЛАШТУВАННЯ ✨</button>
-  <button class="btn-off" onclick="turnOff()">ВИМКНУТИ СВІТЛОДІОД ⬛</button>
+  <button class="btn-off" onclick="turnOff()">ПОВНИЙ СТАНДБАЙ (ВИМКНУТИ ВСЕ) ⬛</button>
 
   <script>
     const tg = window.Telegram.WebApp;
@@ -378,6 +395,7 @@
     const bright = document.getElementById('brightness');
     const speed = document.getElementById('speed');
     const orbCore = document.getElementById('orbCore');
+    const previewBadge = document.getElementById('previewBadge');
 
     function hexToRgb(hex) {
       const bigint = parseInt(hex.replace('#', ''), 16);
@@ -435,14 +453,27 @@
       updateUI();
     }
 
+    function setStealthMode() {
+      bright.value = 0;
+      updateUI();
+      sendData();
+    }
+
     function updateUI() {
-      document.getElementById('bright-val').innerText = bright.value + '%';
+      const bVal = parseInt(bright.value);
+      document.getElementById('bright-val').innerText = (bVal === 0) ? 'Вимкнено (0%) 🌙' : bVal + '%';
       document.getElementById('speed-val').innerText = speed.value + '%';
 
       document.documentElement.style.setProperty('--c1', c1.value);
       document.documentElement.style.setProperty('--c2', c2.value);
 
-      orbCore.style.opacity = Math.max(0.2, bright.value / 100);
+      if (bVal === 0) {
+        orbCore.style.opacity = 0.05;
+        previewBadge.innerText = '🌙 Світлодіод вимкнено (Тільки екран)';
+      } else {
+        orbCore.style.opacity = Math.max(0.2, bVal / 100);
+        previewBadge.innerText = '👁️ Попередній перегляд';
+      }
     }
 
     function selectMode(mode, btn) {
