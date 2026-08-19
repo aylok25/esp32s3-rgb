@@ -40,7 +40,6 @@
       margin: 4px 0 12px 0;
     }
 
-    /* 3D CYBER ORB VISUALIZER */
     .orb-wrapper {
       position: relative;
       width: 90px;
@@ -84,7 +83,6 @@
 
     @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* CARDS & BUTTONS */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -328,11 +326,12 @@
 
       <div id="weatherCondTab" style="display: none;">
         <div class="grid-2">
+          <!-- Режими: 8=Дощ, 15=Сніг, 16=Сонце, 9=Гроза, 17=Туман -->
           <button class="btn weather-cond-btn" onclick="previewWeatherCond(8, '#0055ff', '#00d4ff', this)">🌧️ Дощ</button>
-          <button class="btn weather-cond-btn" onclick="previewWeatherCond(3, '#a0e7e5', '#ffffff', this)">❄️ Сніг</button>
-          <button class="btn weather-cond-btn" onclick="previewWeatherCond(1, '#ffaa00', '#ffaa00', this)">☀️ Сонячно</button>
+          <button class="btn weather-cond-btn" onclick="previewWeatherCond(15, '#a0e7e5', '#ffffff', this)">❄️ Сніг</button>
+          <button class="btn weather-cond-btn" onclick="previewWeatherCond(16, '#ffaa00', '#ffaa00', this)">☀️ Сонячно</button>
           <button class="btn weather-cond-btn" onclick="previewWeatherCond(9, '#4b0082', '#ffffff', this)">🌩️ Гроза</button>
-          <button class="btn weather-cond-btn" style="grid-column: span 2;" onclick="previewWeatherCond(1, '#778899', '#778899', this)">🌫️ Туман</button>
+          <button class="btn weather-cond-btn" style="grid-column: span 2;" onclick="previewWeatherCond(17, '#778899', '#778899', this)">🌫️ Туман</button>
         </div>
       </div>
     </div>
@@ -369,7 +368,6 @@
     <div class="card-head"><span>⚙️ Параметри</span></div>
     <div class="slider-box">
       <div class="slider-label"><span>Яскравість LED</span><span class="val" id="bright-val">50%</span></div>
-      <!-- Діапазон від 0% до 100% -->
       <input type="range" id="brightness" min="0" max="100" value="50" oninput="updateUI()">
       <button class="btn-stealth" onclick="setStealthMode()">🌙 Тільки екран (LED 0%)</button>
     </div>
