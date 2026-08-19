@@ -40,7 +40,6 @@
       margin: 4px 0 10px 0;
     }
 
-    /* 3D CYBER ORB PREVIEW */
     .orb-wrapper {
       position: relative;
       width: 86px;
@@ -87,7 +86,6 @@
 
     @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* CARDS & BUTTONS */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -126,7 +124,6 @@
 
     .btn:active, .mode-btn:active { transform: scale(0.97); }
 
-    /* ПІДСВІЧУВАННЯ ОБРАНОГО РЕЖИМУ */
     .mode-btn.active, .btn.active {
       background: linear-gradient(135deg, #00f0ff, #0077ff) !important;
       color: #000000 !important;
@@ -228,7 +225,7 @@
     input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
     input[type=color]::-webkit-color-swatch { border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
-    .slider-box { margin-bottom: 8px; }
+    .slider-box { margin-bottom: 10px; }
     .slider-label { display: flex; justify-content: space-between; font-size: 11px; color: #8b949e; margin-bottom: 4px; }
     .slider-label .val { color: var(--accent); font-weight: 700; }
 
@@ -263,7 +260,6 @@
       margin-top: 6px;
     }
 
-    /* ГОЛОВНА КНОПКА ЗАСТОСУВАННЯ */
     .btn-main {
       width: 100%;
       max-width: 350px;
@@ -298,7 +294,6 @@
 
   <div class="header-title">ESP32 CYBER CONTROL</div>
 
-  <!-- ЖИВИЙ ПОПЕРЕДНІЙ ПЕРЕГЛЯД -->
   <div class="orb-wrapper">
     <div class="orb-ring"></div>
     <div class="orb-core" id="orbCore"></div>
@@ -364,21 +359,27 @@
     </div>
   </div>
 
-  <!-- ПАРАМЕТРИ -->
+  <!-- ПАРАМЕТРИ (З ДВОМА ОКРЕМИМИ ПОВЗУНКАМИ ШВИДКОСТІ) -->
   <div class="card">
-    <div class="card-head"><span>⚙️ Параметри</span></div>
+    <div class="card-head"><span>⚙️ Параметри роботи</span></div>
+    
     <div class="slider-box">
       <div class="slider-label"><span>Яскравість LED</span><span class="val" id="bright-val">50%</span></div>
       <input type="range" id="brightness" min="0" max="100" value="50" oninput="updateUI()">
       <button class="btn-stealth" onclick="setStealthMode()">🌙 Тільки екран (LED 0%)</button>
     </div>
+
     <div class="slider-box" style="margin-top: 8px;">
-      <div class="slider-label"><span>Швидкість</span><span class="val" id="speed-val">50%</span></div>
+      <div class="slider-label"><span>Швидкість LED ефектів</span><span class="val" id="speed-val">50%</span></div>
       <input type="range" id="speed" min="1" max="100" value="50" oninput="updateUI()">
+    </div>
+
+    <div class="slider-box" style="margin-top: 8px;">
+      <div class="slider-label"><span>🎬 Швидкість анімації екрана (OLED)</span><span class="val" id="oled-speed-val">50%</span></div>
+      <input type="range" id="oledSpeed" min="1" max="100" value="50" oninput="updateUI()">
     </div>
   </div>
 
-  <!-- КНОПКИ ДІЇ -->
   <button class="btn-main" onclick="sendData()">ЗАСТОСУВАТИ НАЛАШТУВАННЯ ✨</button>
   <button class="btn-off" onclick="turnOff()">ВИМКНУТИ ПРИЛАД (STANDBY) ⬛</button>
 
@@ -395,6 +396,7 @@
     const c4 = document.getElementById('c4');
     const bright = document.getElementById('brightness');
     const speed = document.getElementById('speed');
+    const oledSpeed = document.getElementById('oledSpeed');
     const orbCore = document.getElementById('orbCore');
     const previewBadge = document.getElementById('previewBadge');
 
@@ -473,6 +475,7 @@
       const bVal = parseInt(bright.value);
       document.getElementById('bright-val').innerText = (bVal === 0) ? 'Вимкнено (0%) 🌙' : bVal + '%';
       document.getElementById('speed-val').innerText = speed.value + '%';
+      document.getElementById('oled-speed-val').innerText = oledSpeed.value + '%';
 
       document.documentElement.style.setProperty('--c1', c1.value);
       document.documentElement.style.setProperty('--c2', c2.value);
@@ -486,7 +489,7 @@
       }
     }
 
-    // ВІДПРАВКА НА ESP32 ТІЛЬКИ ПРИ НАТИСКАННІ КНОПКИ
+    // ВІДПРАВКА НА ESP32 (ВКЛЮЧНО З ШВИДКІСТЮ ЕКРАНА)
     function sendData() {
       if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
       const rgb1 = hexToRgb(c1.value);
@@ -494,13 +497,13 @@
       const rgb3 = hexToRgb(c3.value);
       const rgb4 = hexToRgb(c4.value);
       
-      const command = `CMD:${currentMode},${rgb1.r},${rgb1.g},${rgb1.b},${rgb2.r},${rgb2.g},${rgb2.b},${rgb3.r},${rgb3.g},${rgb3.b},${rgb4.r},${rgb4.g},${rgb4.b},${bright.value},${speed.value}`;
+      const command = `CMD:${currentMode},${rgb1.r},${rgb1.g},${rgb1.b},${rgb2.r},${rgb2.g},${rgb2.b},${rgb3.r},${rgb3.g},${rgb3.b},${rgb4.r},${rgb4.g},${rgb4.b},${bright.value},${speed.value},${oledSpeed.value}`;
       tg.sendData(command);
     }
 
     function turnOff() {
       if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
-      tg.sendData("CMD:0,0,0,0,0,0,0,0,0,0,0,0,0,0,50");
+      tg.sendData("CMD:0,0,0,0,0,0,0,0,0,0,0,0,0,0,50,50");
     }
 
     updateUI();
